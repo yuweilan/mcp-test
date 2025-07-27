@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Markdown from 'react-markdown'
 
 interface Message {
   id: number;
@@ -58,9 +59,13 @@ export default function ChatPage() {
               console.info('Parsed data:', data, data?.message, data?.message?.content);
               const mes = data?.message?.content;
               if (mes) {
-                aiContent += mes;
                 // aiContent += mes.replace(/\\n/g, '\n').replace(/\\r/g, '\r').replace(/\\"/g, '"');
-                console.info('Updated AI content:', aiContent);
+                console.info('Updated AI content:', mes);
+                if (mes == '<think>') {
+                  aiContent += ' '
+                } else if (mes == '</think>') {
+                  aiContent += ' '
+                } else { aiContent += mes; }
                 setMessages((msgs) => {
                   const updated = [...msgs];
                   updated[updated.length - 1] = { id: messageId + 1, role: 'assistant', content: aiContent };
@@ -96,7 +101,8 @@ export default function ChatPage() {
                   </Avatar>
                 )}
                 <Card className="p-2">
-                  <p dangerouslySetInnerHTML={{ __html: message.content }}></p>
+                  {/* <p dangerouslySetInnerHTML={{ __html: message.content }}></p> */}
+                  <Markdown>{message.content}</Markdown>
                 </Card>
                 {message.role === "user" && (
                   <Avatar className="ml-2">
